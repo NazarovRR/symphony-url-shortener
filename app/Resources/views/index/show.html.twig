@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="container">
+        <h1>URL Shortener</h1>
+        {{ form_start(mainForm) }}
+        <div class="input-group">
+            {{ form_widget(mainForm.full_url,{ 'attr': {'class': 'txtfield input'}}) }}
+            <button class="btn btn-submit" type="submit">SHORTEN</button>
+        </div>
+        <h2>Want to choose short url by yourself?</h2>
+        <div class="input-group">
+            {{ form_widget(mainForm.encoded,{ 'attr': {'class': 'txtfield-short input'}}) }}
+        </div>
+        {{ form_end(mainForm) }}
+        <div id="link">
+            {% if(model) %}
+                <a href="{{ path('redir',{'encoded':model.encoded}) }}">
+                    {{ url('redir',{'encoded':model.encoded}) }}
+                </a>
+            {% endif %}
+            {{ form_errors(mainForm) }}
+        </div>
+    </div>
+{% endblock %}
