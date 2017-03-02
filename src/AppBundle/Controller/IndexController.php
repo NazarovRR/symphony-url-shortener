@@ -43,25 +43,15 @@ class IndexController extends Controller
                 $model = $repository->insertData($model);
                 if(!$model->getEncoded())
                 {
-                    echo "test1  ";
                     $encoderService = $this->container->get("encoder");
-                    echo "test2  ";
                     $count = $model->getId();
-                    echo "test3  ";
                     $hash = $encoderService->encode($count,false,3,"umbrella");
-                    echo "test4  ";
                     while(!$repository->isShortUnique($hash)){
-                        echo "test5  ";
                         $new_count = $count * 100;
-                        echo "test6  ";
                         $hash = $encoderService->encode($new_count,false,3,"umbrella");
-                        echo "test7  ";
                     }
-                    echo "test8  ";
                     $model->setEncoded($hash);
-                    echo "test9  ";
                     $model = $repository->insertData($model);
-                    echo "test10  ";
                 }
             }
         }
