@@ -26,6 +26,7 @@ class Url
     private $id;
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank(message="Url to be shorten cannot be empty")
      * @AppAssert\IsValidUrl()
      */
     private $full_url;

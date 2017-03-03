@@ -14,6 +14,7 @@ use AppBundle\Form\PostFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,36 +25,13 @@ class IndexController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        $repository = $em->getRepository('AppBundle:Url');
         $form = $this->createForm(PostFormType::class);
         $form->handleRequest($request);
         $model = null;
         if ($form->isSubmitted() && $form->isValid()) {
             $model = $form->getData();
-            $existedModel = $repository->findOneBy(
-                array('full_url' => $model->getFullUrl())
-            );
-            if($existedModel && $existedModel->getEncoded())
-            {
-                $model = $existedModel;
-            }
-            else
-            {
-                $model = $repository->insertData($model);
-                if(!$model->getEncoded())
-                {
-                    $encoderService = $this->container->get("encoder");
-                    $count = $model->getId();
-                    $hash = $encoderService->encode($count,false,3,"umbrella");
-                    while(!$repository->isShortUnique($hash)){
-                        $new_count = $count * 100;
-                        $hash = $encoderService->encode($new_count,false,3,"umbrella");
-                    }
-                    $model->setEncoded($hash);
-                    $model = $repository->insertData($model);
-                }
-            }
+            $updater = $this->container->get('encodeUpdater');
+            $model = $updater->getEncodedModel($model);
         }
         return $this->render("index/show.html.twig",[
             "mainForm" => $form->createView(),
@@ -78,5 +56,45 @@ class IndexController extends Controller
         } else {
             return $this->redirect("/");
         }
+    }
+
+    /**
+     * @Route("/api/v1/create")
+     * @Method("POST")
+     */
+    public function createAction(Request $request)
+    {   $params = array();
+        $body = $request->getContent();
+        if (!empty($body))
+        {
+            $params = json_decode($body, true);
+        }
+        $model = new Url();
+        $model->setFullUrl(@$params['full_url']);
+        if(@$params['encoded'])
+        {
+            $model->setEncoded($params['encoded']);
+        }
+        $validator = $this->get("validator");
+        $violations = $validator->validate($model);
+        if (count($violations) > 0) {
+            $errors = array();
+            foreach ($violations as &$error) {
+                array_push($errors,$error->getMessage());
+            }
+            unset($error);
+            $data = array(
+                "errors"=>$errors,
+                "message"=>"validation error"
+            );
+            return new JsonResponse($data,400);
+        }
+        $updater = $this->container->get('encodeUpdater');
+        $model = $updater->getEncodedModel($model);
+        $data = array(
+            "encoded"=>$model->getEncoded(),
+            "message"=>"Success"
+        );
+        return new JsonResponse($data);
     }
 }

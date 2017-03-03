@@ -6,6 +6,11 @@ parameters:
 services:
   encoder:
       class: AppBundle\Service\EncoderService
+  encodeUpdater:
+      class: AppBundle\Service\EncodeUpdaterService
+      arguments:
+          entityManager: "@doctrine.orm.entity_manager"
+          encoder: "@encoder"
   unique.model.validator:
       class: AppBundle\Validator\Constraints\ModelExistValidator
       arguments:
