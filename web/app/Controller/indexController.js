@@ -16,11 +16,14 @@
           $http({
               method: 'POST',
               url: window.location.origin+"/api/v1/create",
+              headers: {'Content-Type': 'application/x-www-form-urlencoded'},
               data:data
           }).then(function successCallback(response) {
               vm.link = $location.absUrl() + response.data.encoded;
+              vm.errors = null;
           }, function errorCallback(response) {
               vm.errors = response.data.errors
+              vm.link = null;
           });
       }
   }]);
