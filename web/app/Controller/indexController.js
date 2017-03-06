@@ -2,7 +2,7 @@
  * Created by mikhailnazarov on 03.03.17.
  */
 (function () {
-  angular.module('shortenerApp').controller('IndexController',['$http',function ($http) {
+  angular.module('shortenerApp').controller('IndexController',['$http','$location',function ($http,$location) {
       var vm = this;
       vm.full_url = "";
       vm.encoded = "";
@@ -12,19 +12,15 @@
             encoded:vm.encoded
           };
           var data = JSON.stringify(req);
-          alert(data);
           // Simple GET request example:
           $http({
               method: 'POST',
               url: window.location.origin+"/api/v1/create",
               data:data
           }).then(function successCallback(response) {
-              alert(response.status);
-              // var data = JSON.parse(response.data);
-              alert(response.data);
+              vm.link = $location.absUrl() + response.data.encoded;
           }, function errorCallback(response) {
-              alert(response.status);
-              alert("lol");
+              vm.errors = response.data.errors
           });
       }
   }]);

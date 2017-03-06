@@ -22,8 +22,10 @@
             <input id="encoded-field" ng-model="base.encoded" type="text" class="txtfield-short input" name="encoded">
         </div>
         <div id="link">
-            <a ng-if="base.link">{{base.link}}</a>
-            <p ng-repeat="error in base.errors"></p>
+            <a ng-if="base.link" href="{{base.link}}">{{base.link}}</a>
+            <div ng-repeat="error in base.errors">
+                <p>{{error}}</p>
+            </div>
         </div>
     </form>
 </div>

@@ -17,24 +17,27 @@ use Symfony\Component\HttpFoundation\Request;
 
 class IndexController extends Controller
 {
-//    /**
-//     * @Route("/", name="base")
-//     */
-//    public function indexAction(Request $request)
-//    {
-//        $form = $this->createForm(PostFormType::class);
-//        $form->handleRequest($request);
-//        $model = null;
-//        if ($form->isSubmitted() && $form->isValid()) {
-//            $model = $form->getData();
-//            $updater = $this->container->get('encodeUpdater');
-//            $model = $updater->getEncodedModel($model);
-//        }
-//        return $this->render("index/show.html.twig",[
-//            "mainForm" => $form->createView(),
-//            "model" => $model
-//        ]);
-//    }
+   /**
+    * @Route("/", name="base")
+    */
+   public function indexAction(Request $request)
+   {
+        // This is symfony form implementation, changed for an angular approach, for now
+       // $form = $this->createForm(PostFormType::class);
+       // $form->handleRequest($request);
+       // $model = null;
+       // if ($form->isSubmitted() && $form->isValid()) {
+       //     $model = $form->getData();
+       //     $updater = $this->container->get('encodeUpdater');
+       //     $model = $updater->getEncodedModel($model);
+       // }
+       // return $this->render("index/show.html.twig",[
+       //     "mainForm" => $form->createView(),
+       //     "model" => $model
+       // ]);
+        //Angular view
+        return $this->render("index/index_app.html.php");
+   }
 
     /**
      * @param $encoded
